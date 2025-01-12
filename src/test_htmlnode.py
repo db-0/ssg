@@ -1,5 +1,5 @@
 import unittest
-from htmlnode import HTMLNode
+from htmlnode import HTMLNode, LeafNode, ParentNode
 
 
 class TestHTMLNode(unittest.TestCase):
@@ -17,6 +17,25 @@ class TestHTMLNode(unittest.TestCase):
         node = HTMLNode(props={"href": "test.com"})
         leading_space = node.props_to_html()[0]
         self.assertEqual(leading_space, " ")
+
+
+    def test_leaf_eq(self):
+        node = LeafNode("a", "This is a link", {"href": "https://boot.dev"})
+        self.assertEqual(node.to_html(), "<a href=\"https://boot.dev\">This is a link</a>")
+
+    # ParentNode tests
+    def test_pn_eq(self):
+        node = ParentNode(
+            "p",
+            [
+                LeafNode("b", "Bold text"),
+                LeafNode(None, "Normal text"),
+                LeafNode("i", "italic text"),
+                LeafNode(None, "Normal text"),
+            ],
+        )
+        self.assertEqual(node.to_html(),"<p><b>Bold text</b>Normal text<i>italic text</i>Normal text</p>")
+
 
 if __name__ == "__main__":
     unittest.main()
