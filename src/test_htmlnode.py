@@ -1,6 +1,6 @@
 import unittest
 
-from htmlnode import HTMLNode, LeafNode
+from htmlnode import HTMLNode, LeafNode, ParentNode
 
 
 class TestHTMLNode(unittest.TestCase):
@@ -31,3 +31,25 @@ class TestHTMLNode(unittest.TestCase):
         with self.assertRaises(ValueError) as error:
             node = LeafNode("b", None, None).to_html()
         self.assertEqual("all leaf nodes must have a value", str(error.exception))
+
+    def test_to_html_with_children(self):
+        child_node = LeafNode("span", "child")
+        parent_node = ParentNode("div", [child_node])
+        self.assertEqual(parent_node.to_html(), "<div><span>child</span></div>")
+
+    def test_to_html_with_grandchildren(self):
+        grandchild_node = LeafNode("b", "grandchild")
+        child_node = ParentNode("span", [grandchild_node])
+        parent_node = ParentNode("div", [child_node])
+        self.assertEqual(
+            parent_node.to_html(),
+            "<div><span><b>grandchild</b></span></div>",
+        )
+
+    def test_to_html_exception_in_child(self):
+        grandchild_node = LeafNode("b", "grandchild")
+        child_node = ParentNode("", [grandchild_node])
+        parent_node = ParentNode("div", [child_node])
+        with self.assertRaises(ValueError) as error:
+            node = parent_node.to_html()
+        self.assertEqual("all parent nodes must have a tag", str(error.exception))
