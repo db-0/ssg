@@ -69,6 +69,26 @@ class TestTextConversion(unittest.TestCase):
         self.assertEqual(split_nodes_delimiter([node], "**", TextType.BOLD), 
                          [TextNode("This is a ", TextType.TEXT, None), TextNode("bold", TextType.BOLD, None),
                           TextNode(" node.", TextType.TEXT, None)])
+    
+    def test_code(self):
+        node = TextNode("This is a `code` node.", TextType.TEXT)
+        result = [TextNode("This is a ", TextType.TEXT, None), TextNode("code", TextType.CODE, None),
+                          TextNode(" node.", TextType.TEXT, None)]
+        self.assertEqual(split_nodes_delimiter([node], "`", TextType.CODE), result)
+    
+    def test_multiple_nodes(self):
+        node1 = TextNode("This is the *first* italicized node.", TextType.TEXT)
+        node2 = TextNode("This is the *second* italicized node.", TextType.TEXT)
+        result = [TextNode("This is the ", TextType.TEXT, None), TextNode("first", TextType.ITALIC, None),
+                          TextNode(" italicized node.", TextType.TEXT, None), TextNode("This is the ", TextType.TEXT, None),
+                          TextNode("second", TextType.ITALIC, None), TextNode(" italicized node.", TextType.TEXT, None)]
+        self.assertEqual(split_nodes_delimiter([node1, node2], "*", TextType.ITALIC), result)
+    
+    def test_multiple_markdowns(self):
+        node = TextNode("This is the **first bold** and the **second bold**", TextType.TEXT)
+        result = [TextNode("This is the ", TextType.TEXT, None), TextNode("first bold", TextType.BOLD, None),
+                  TextNode(" and the ", TextType.TEXT, None), TextNode("second bold", TextType.BOLD, None)]
+        self.assertEqual(split_nodes_delimiter([node], "**", TextType.BOLD), result)
 
 if __name__ == "__main__":
     unittest.main()

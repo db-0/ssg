@@ -1,4 +1,4 @@
-from textnode import *
+from textnode import TextNode, TextType
 
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
@@ -14,10 +14,13 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
                 start_index = text.find(delimiter)
                 result.append(TextNode(text[:start_index], TextType.TEXT))
                 end_index = text.find(delimiter, start_index + len(delimiter))
+                if end_index == -1:
+                    raise Exception("no closing delimiter found")
                 result.append(TextNode(text[start_index + len(delimiter):end_index], text_type))
                 text = text[end_index + len(delimiter):]
             
-            result.append(TextNode(text, TextType.TEXT))
+            if text:
+                result.append(TextNode(text, TextType.TEXT))
             new_nodes.extend(result)
 
     return new_nodes
