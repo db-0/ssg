@@ -1,6 +1,7 @@
 import unittest
 
 from textnode import *
+from textconversion import *
 
 
 class TestTextNode(unittest.TestCase):
@@ -61,6 +62,13 @@ class TestTextNode(unittest.TestCase):
         self.assertEqual(html_node.tag, "img")
         self.assertEqual(html_node.value, "")
         self.assertEqual(html_node.props, {"src": "https://www.google.com", "alt": "This is an image node"})
+
+class TestTextConversion(unittest.TestCase):
+    def test_bold(self):
+        node = TextNode("This is a **bold** node.", TextType.TEXT)
+        self.assertEqual(split_nodes_delimiter([node], "**", TextType.BOLD), 
+                         [TextNode("This is a ", TextType.TEXT, None), TextNode("bold", TextType.BOLD, None),
+                          TextNode(" node.", TextType.TEXT, None)])
 
 if __name__ == "__main__":
     unittest.main()
